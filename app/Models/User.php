@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 //relationship with other models
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +36,16 @@ class User extends Authenticatable
         return $this->hasMany(category::class);
     }
 
+    public function customer(): HasMany
+    {
+        return $this->hasMany(customer::class);
+    }
+
+    public function invoice(): HasMany
+    {
+        return $this->hasMany(invoice::class);
+    }
+
     public function phone(): HasOne
     {
         return $this->hasOne(phone::class);
@@ -44,6 +56,13 @@ class User extends Authenticatable
         return $this->belongsToMany(roles::class, 'roles_users')->withPivot('created_at');
     }
 
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => strtoupper($value),
+            set: fn (string $value) => strtolower($value)
+        );
+    }
     
     /**
      * The attributes that are mass assignable.
@@ -72,6 +91,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:m',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];

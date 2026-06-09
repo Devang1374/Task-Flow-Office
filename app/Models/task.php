@@ -21,15 +21,13 @@ class task extends Model
         'isActive'
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'id' => 'string'
-        ];
-    }
-
+    /**
+    * The attributes that should be cast.
+    *
+    * @var array
+    */
     protected $casts = [
-        'created_at' => 'datetime:Y-m-d',
-        'id' => 'string'
+        'isActive' => 'boolean',
+        'created_at' => 'datetime:Y-m-d H:i:s'
     ];
 }

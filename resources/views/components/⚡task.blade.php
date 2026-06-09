@@ -5,21 +5,32 @@ use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 
+//view to pdf
+use Barryvdh\DomPDF\Facade\Pdf;
+
 new class extends Component
 {
   use WithPagination;
     public $user_id;
-    public $showForm = false;
-    public $isEditing = false;
-    public $search;
-    public string $message = '';
     public $tamp;
     public $task_id;
-    public $category = '';
-    public $categorys;
 
     public $tasks;
 
+    //function that sets deffulte values
+    #[on('task-updated')]
+    public function mount(){
+        $this->tasks = auth()->user()->task;
+        $this->categorys = auth()->user()->category;
+        $this->category = '';
+        $this->user_id = auth()->user()->id;
+        $this->isEditing = false;
+        $this->showDownload = false;
+    }
+
+    //function that shows add task form
+    //varibale
+    public $showForm = false;
     #[on('show')]
     public function show(){
         if(!$this->categorys->isNotEmpty()){
@@ -29,27 +40,9 @@ new class extends Component
         $this->showForm = $this->showForm ? false : true;
     }
 
-    public function edit($id){
-      $this->task_id = $id;
-      $this->isEditing = $this->isEditing ? false : true;
-      $this->dispatch('showUpdate');
-    }
-      
-    #[on('closeEdit')]
-    public function closeEditing(){
-      $this->isEditing = $this->isEditing ? false : true;
-    }
-
-    
-    #[on('task-updated')]
-    public function mount(){
-        $this->tasks = auth()->user()->task;
-        $this->categorys = auth()->user()->category;
-        $this->category = '';
-        $this->user_id = auth()->user()->id;
-        $this->isEditing = false;
-    }
-
+    //function that handels the search input and returns search result
+    //varibales
+    public $search;
     public function updatedSearch(){
         $this->tasks = auth()->user()->task()->where(function ($query){
             $query->where('title','like',"%{$this->search}%")
@@ -58,10 +51,7 @@ new class extends Component
         })->where('category','like',"%{$this->category}%")->get();
     }
 
-    public function updatedCategory(){
-        $this->tasks = auth()->user()->task()->where('category','like',"%{$this->category}%")->get();
-    }
-
+    // function that removes task from database
     public function remove($id){
         auth()->user()->task()->where('id',$id)->where('user_id', $this->user_id)->delete();
 
@@ -69,6 +59,7 @@ new class extends Component
         $this->dispatch('task-updated');
     }
 
+    // function that handles active and compelete status of task
     public function update($id){
         $isActive = auth()->user()->task()->where('id', $id)->value('isActive');
 
@@ -84,12 +75,24 @@ new class extends Component
         $this->dispatch('task-updated');
     }
 
+    // function that handles the notification message
+    //varibales
+    public string $message = '';
     #[On('sendMessage')]
     public function handleMessage($msg)
     {
         $this->message = $msg;
     }
 
+    //function that fetches category from database
+    //varibales
+    public $category = '';
+    public $categorys;
+    public function updatedCategory(){
+        $this->tasks = auth()->user()->task()->where('category','like',"%{$this->category}%")->get();
+    }
+
+    // finding caption for category tool tip
     public function findCaption($title){
         foreach($this->categorys as $cat){
             if($cat['title'] == $title){
@@ -97,6 +100,45 @@ new class extends Component
             }
         }
     }
+
+    //this function opens an edit form and sends edit id to to edit component
+    public $isEditing = false;
+    public function edit($id){
+      $this->task_id = $id;
+      $this->isEditing = $this->isEditing ? false : true;
+      $this->dispatch('showUpdate');
+    }
+      
+    //this function closes the edit form
+    #[on('closeEdit')]
+    public function closeEditing(){
+      $this->isEditing = $this->isEditing ? false : true;
+    }
+
+    // download system
+    //varibales
+    public $showDownload;
+    //open download links
+    #[On('showDownload')]
+    public function showDownloadLinks(){
+      $this->showDownload = $this->showDownload ? false : true;
+    }
+
+    //download pdf
+    public function pdf(){
+      $this->redirectRoute('pdf');
+    }
+
+    //download csv
+    public function csv(){
+      $this->redirectRoute('csv');
+    }
+
+    //download xlsx
+    public function xlsx(){
+      $this->redirectRoute('xlsx');
+    }
+
 };
 ?>
 
@@ -165,6 +207,18 @@ new class extends Component
         @endif
     </div>
 
+    <div wire:key="download-links-container">
+    @if($showDownload)
+    <div wire:key="download-links" class="absolute flex items-center justify-center bg-blue-50 w-full h-full top-0 left-0 z-111">
+      <div class="flex flex-col gap-5">
+          <x-primary-button class="dark:bg-red-700 dark:text-white dark:hover:bg-red-300 dark:hover:text-black" title="Download Task in PDF Formate" wire:click="pdf">PDF</x-primary-button>
+          <x-primary-button class="dark:bg-violet-700 dark:text-white dark:hover:bg-red-300 dark:hover:text-black" title="Download Task in CSV formate" wire:click="csv">CSV</x-primary-button>
+          <x-primary-button class="dark:bg-green-700 dark:text-white dark:hover:bg-green-500 dark:hover:text-black" title="Download Task in Excel formate" wire:click="xlsx">EXCEL</x-primary-button>
+          <x-primary-button class="dark:bg-red-500 dark:text-white dark:hover:bg-red-300 dark:hover:text-black" title="Download Task in Excel formate" wire:click="$dispatch('showDownload')">Cancel</x-primary-button>
+      </div>
+    </div>
+    @endif
+    </div>
     <!-- add button and search input -->
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -195,6 +249,7 @@ new class extends Component
                   </div>
 
                   <!-- add button -->
+                  <x-primary-button title="Add New Task" wire:click="showDownloadLinks">Download</x-primary-button>
                   <x-primary-button title="Add New Task" wire:click="show">ADD</x-primary-button>
                 </div>
             </div>

@@ -3,3 +3,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Makes the native browser calendar icon match the text color */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
+}

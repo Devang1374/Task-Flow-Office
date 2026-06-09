@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\TaskResource;
+use App\Http\Resources\TaskCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -15,11 +15,13 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        JsonResource::withoutWrapping();
+
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'task' => new TaskResource($this->task),
+            'tasks' => new TaskCollection($this->task()->Paginate(2)),
+            'total_post' => $this->whenCounted('task'),
         ];
     }
 }
