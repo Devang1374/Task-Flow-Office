@@ -93,7 +93,7 @@
         }
 
         .total-table {
-            width: 40%;
+            width: 50%;
             margin-left: auto; 
             border-collapse: collapse;
             margin-top: 10px;
@@ -129,15 +129,10 @@
 <body>
     <div class="container">
         
-        <!-- Header Layout Row -->
         <table class="layout-table">
             <tr>
                 <td class="logo">    
-                    @if(file_exists(public_path('images/taskFlow-logo.png')))
-                        <img src="{{ public_path('images/taskFlow-logo.png') }}" alt="Logo">
-                    @else
-                        <h2>TaskFlow</h2>
-                    @endif
+                    <img src="{{ public_path('images/taskFlow-logo.png') }}" alt="Logo">
                 </td>
                 <td class="title">    
                     <h1>Invoice</h1>
@@ -149,12 +144,12 @@
             <tr>
                 <td style="width: 50%;">
                     <strong>From:</strong><br>
-                    <span class="text-blue">{{ $user['name'] }}</span><br>
+                    <span class="text-blue">{{ $invoice['company_name'] }}</span><br>
                     <address>
-                        {{ $user['phone']['address'] }}<br>
-                        {{ $user['phone']['number'] }}
+                        {{ $invoice['company_address'] }}<br>
+                        {{ $invoice['company_number'] }}
                     </address>
-                    <a href="mailto:{{ $user['email'] }}" class="text-blue">{{ $user['email'] }}</a>
+                    <a href="mailto:{{ $invoice['company_email'] }}" class="text-blue">{{ $invoice['company_email'] }}</a>
                 </td>
                 
                 <td style="width: 50%;">
@@ -176,7 +171,7 @@
                             <td>{{ $invoice['due_date'] }}</td>
                         </tr>
                         <tr>
-                            <th>Total Due</th>
+                            <th>Total Due (Tax Excluded)</th>
                             <th>{{ $totalDue }}</th>
                         </tr>
                     </table>
@@ -188,12 +183,12 @@
             <tr>
                 <td>
                     <strong>To:</strong><br>
-                    <span>{{ $customer['name'] }}</span><br>
+                    <span>{{ $invoice['customer_name'] }}</span><br>
                     <address>
-                        {{ $customer['address'] }}<br>
-                        {{ $user['number'] }}
+                        {{ $invoice['customer_address'] }}<br>
+                        {{ $invoice['customer_number'] }}
                     </address>
-                    <a href="mailto:{{ $customer['email'] }}" class="text-blue">{{ $customer['email'] }}</a>
+                    <a href="mailto:{{ $invoice['customer_email'] }}" class="text-blue">{{ $invoice['customer_email'] }}</a>
                 </td>
             </tr>
         </table>
@@ -268,7 +263,7 @@
 
     <div class="footer">
         <div class="terms">
-            {{ $user['phone']['terms'] }}
+            {{ $invoice['terms'] }}
         </div>
     </div>
 </body>

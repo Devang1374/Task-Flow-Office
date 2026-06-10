@@ -15,5 +15,14 @@ class invoice extends Model
         'invoice_number',
         'order_number',
         'due_date',
+        'company_name',
+        'company_email',
+        'company_number',
+        'company_address',
+        'terms',
+        'customer_name',
+        'customer_email',
+        'customer_number',
+        'customer_address',
     ];
 }

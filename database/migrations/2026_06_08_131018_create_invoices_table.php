@@ -18,6 +18,11 @@ return new class extends Migration
             $table->string('invoice_number');
             $table->string('order_number');
             $table->date('due_date');
+            $table->string('company_name');
+            $table->string('company_email');
+            $table->string('company_number');
+            $table->string('company_address');
+            $table->string('terms');
             $table->timestamps();
         });
     }

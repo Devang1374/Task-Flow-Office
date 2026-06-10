@@ -22,13 +22,11 @@ class DownloadController extends Controller
     }
 
     public function invoicePdf($order_id, $customer_id){
-        $user = auth()->user()->with('phone')->first();
-        $customer = auth()->user()->customer()->find($customer_id)->first();
         $totalDue = auth()->user()->customer()->find($customer_id)->product()->sum('price');
         $invoice = auth()->user()->customer()->find($customer_id)->invoice()->where('order_number', $order_id)->first();
         $product = auth()->user()->customer()->find($customer_id)->product()->where('order_number', $order_id)->get();
-        $pdf = Pdf::loadView('invoicePdf', ['user' => $user, 'invoice' => $invoice, 'customer' => $customer, 'totalDue' => $totalDue, 'products' => $product]);
-        return $pdf->stream('order_invoice');
+        $pdf = Pdf::loadView('invoicePdf', ['invoice' => $invoice, 'totalDue' => $totalDue, 'products' => $product]);
+        return $pdf->stream($invoice['customer_name'].'Task-Flow invoice.pdf');
     }
 
     public function pdf(){

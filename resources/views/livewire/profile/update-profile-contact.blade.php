@@ -12,6 +12,7 @@ new class extends Component
 {
     public $phone;
     public $company_name = '';
+    public $email = '';
     public $number = '';
     public $address = '';
     public $terms = '';
@@ -20,6 +21,7 @@ new class extends Component
     {
         $this->phone = User::find(auth()->user()->id)->phone;
         $this->number = $this->phone['number'];
+        $this->email = $this->phone['email'];
         $this->company_name = $this->phone['company_name'];
         $this->address = $this->phone['address'];
         $this->terms = $this->phone['terms'];
@@ -32,6 +34,7 @@ new class extends Component
     {
         $validated = $this->validate([ 
             'company_name' => 'required',
+            'email' => 'required',
             'number' => 'required|numeric|max_digits:13',
             'address' => 'required',
             'terms' => 'required',
@@ -70,6 +73,10 @@ new class extends Component
             <x-input-label for="company_name" :value="__('Company Name')" />
             <x-text-input wire:model="company_name" id="company_name" name="company_name" type="text" class="mt-1 block w-full" required autofocus autocomplete="company_name" />
             <x-input-error class="mt-2" :messages="$errors->get('company_name')" />
+            
+            <x-input-label for="company_email" :value="__('Company Email')" />
+            <x-text-input wire:model="email" id="company_email" name="company_email" type="text" class="mt-1 block w-full" required autofocus autocomplete="email" />
+            <x-input-error class="mt-2" :messages="$errors->get('company_email')" />
             
             <x-input-label for="number" :value="__('Phone Number')" />
             <x-text-input wire:model="number" id="number" name="number" type="text" class="mt-1 block w-full" required autofocus autocomplete="number" />

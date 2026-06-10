@@ -7,9 +7,23 @@ new class extends Component
 {
     public $showForm = false;
     public $customers;
+    public $search;
 
     public function mount(){
         $this->customers = auth()->user()->customer()->with('invoice')->get();
+    }
+
+    public function updatedSearch(){
+        $this->customers = auth()->user()->customer()
+        ->with('invoice')
+        ->where(function ($query) {
+            $query->where('name', 'like', "%{$this->search}%")
+                  ->orWhereHas('invoice', function ($subQuery) {
+                      $subQuery->where('invoice_number', 'like', "%{$this->search}%");
+                  });
+        })
+        ->get();
+
     }
     
     #[on('show')]
