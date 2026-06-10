@@ -57,17 +57,6 @@ Route::get('addTask', function(){
 });
 
 Route::get('test', function(){
-    auth()->user()->invoice()->create([
-            'customer_id' => 2,
-            'invoice_number' => "INV-asdfasdf",
-            'order_number' => 2,
-            'due_date' => Carbon::now(),
-            'company_name' => "taskflow",
-            'company_email' => "taskflow@",
-            'company_number' => "12121212",
-            'company_address' => "sardanagar",
-            'terms' => "dfdfdf",
-        ]);
 
         return "update";
 });

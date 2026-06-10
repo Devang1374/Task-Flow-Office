@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 
 class DownloadController extends Controller
 {
+    //creates csv file of user task
     public function csv(){
         return Excel::download(
             new TaskExport(auth()->user()->id),
@@ -21,6 +22,7 @@ class DownloadController extends Controller
         );
     }
 
+    //this funcion fetches the data and creates a invoice Pdf
     public function invoicePdf($order_id, $customer_id){
         $totalDue = auth()->user()->customer()->find($customer_id)->product()->sum('price');
         $invoice = auth()->user()->customer()->find($customer_id)->invoice()->where('order_number', $order_id)->first();
@@ -29,6 +31,7 @@ class DownloadController extends Controller
         return $pdf->stream($invoice['customer_name'].'Task-Flow invoice.pdf');
     }
 
+    //this funciont creates user tasks pdf
     public function pdf(){
         $tasks = new TaskCollection(auth()->user()->task);
         $user = auth()->user();
@@ -36,6 +39,7 @@ class DownloadController extends Controller
         return $pdf->stream('task.pdf');
     }
 
+    //creates Excel file of user tasks
     public function xlsx(){
         return Excel::download(
             new TaskExport(auth()->user()->id),
