@@ -6,10 +6,11 @@ use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Carbon;
 
+
 // Models
 use App\Models\User;
 use App\Models\customer;
-use App\Models\Task;
+use App\Models\task;
 
 use App\Models\product;
 
@@ -57,7 +58,7 @@ Route::get('addTask', function(){
 });
 
 Route::get('test', function(){
-
+        
         return "update";
 });
 

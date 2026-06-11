@@ -48,11 +48,11 @@ new class extends Component
                         </h2>
                         <x-input-label for="title" :value="__('title')" />
                         <x-text-input wire:model.live="title" id="title" class="block mt-1 w-full" type="text" name="title"  autofocus autocomplete="username" placeholder="Task Title" />
-                        <x-input-error :messages="$errors->get('form.title')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('title')" class="mt-2" />
 
                         <x-input-label for="caption" :value="__('caption')" />
                         <x-text-input wire:model.live="caption" id="caption" class="block mt-1 w-full" type="text" name="caption"  autocomplete="username" placeholder="Task caption" />
-                        <x-input-error :messages="$errors->get('form.caption')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('caption')" class="mt-2" />
                         
                         <x-input-label for="category" :value="__('category')" />
                         <select wire:model.live="selectedCategory" class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 shadow-sm transition duration-150 ease-in-out hover:border-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-gray-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/30">
@@ -61,7 +61,7 @@ new class extends Component
                                 <option value="{{$cat['title']}}" class="text-gray-900 dark:bg-gray-800 dark:text-gray-200">{{$cat['title']}}</option>
                             @endforeach
                         </select>
-                        <x-input-error :messages="$errors->get('form.category')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('category')" class="mt-2" />
 
 
                         <div class="flex items-center justify-end mt-4">

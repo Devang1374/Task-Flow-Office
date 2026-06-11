@@ -5,11 +5,16 @@ use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 
+use Livewire\WithFileUploads;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\TaskImport;
+
 //view to pdf
 use Barryvdh\DomPDF\Facade\Pdf;
 
 new class extends Component
 {
+  use WithFileUploads;
   use WithPagination;
     public $user_id;
     public $tamp;
@@ -26,6 +31,7 @@ new class extends Component
         $this->user_id = auth()->user()->id;
         $this->isEditing = false;
         $this->showDownload = false;
+        $this->isImport = false;
     }
 
     //function that shows add task form
@@ -139,6 +145,26 @@ new class extends Component
       $this->redirectRoute('xlsx');
     }
 
+    public $csv_file;
+    public $isImport;
+    public function import(){
+        $this->validate([
+          'csv_file' => 'required'
+        ]);
+
+        Excel::import(
+          new TaskImport,
+          $this->csv_file
+        );
+
+        $this->message = "File Imported successfully";
+        $this->reset('csv_file');
+        $this->dispatch('task-updated');
+    }
+
+    public function isImportBtn(){
+        $this->isImport = $this->isImport ? false : true;
+    }
 };
 ?>
 
@@ -207,7 +233,7 @@ new class extends Component
         @endif
     </div>
 
-    <div wire:key="download-links-container">
+  <div wire:key="download-links-container">
     @if($showDownload)
     <div wire:key="download-links" class="absolute flex items-center justify-center bg-blue-50 w-full h-full top-0 left-0 z-111">
       <div class="flex flex-col gap-5">
@@ -218,6 +244,16 @@ new class extends Component
       </div>
     </div>
     @endif
+      @if($isImport)
+      <div wire:key="download-links" class="absolute flex items-center justify-center bg-blue-50 w-full h-full top-0 left-0 z-111">
+        <div class="flex flex-col gap-5">
+          <input type="file" class="border-2 p-2 border-solid border-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" wire:model="csv_file">
+          <x-input-error :messages="$errors->get('csv_file')" class="mt-2" />
+          <x-primary-button wire:click="import">import</x-primary-button>
+          <x-primary-button wire:click="isImportBtn">Cancel</x-primary-button>
+        </div>
+      </div>
+      @endif
     </div>
     <!-- add button and search input -->
     <div class="py-6">
@@ -249,8 +285,11 @@ new class extends Component
                   </div>
 
                   <!-- add button -->
-                  <x-primary-button title="Add New Task" wire:click="showDownloadLinks">Download</x-primary-button>
-                  <x-primary-button title="Add New Task" wire:click="show">ADD</x-primary-button>
+                  <div>
+                    <x-primary-button title="Add New Task" wire:click="showDownloadLinks">Download</x-primary-button>
+                    <x-primary-button title="Add New Task" wire:click="show">ADD</x-primary-button>
+                    <x-primary-button wire:click="isImportBtn">Import</x-primary-button>
+                  </div>
                 </div>
             </div>
         </div>

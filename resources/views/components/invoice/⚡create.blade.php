@@ -34,6 +34,8 @@ new class extends Component
     public $companyAddress;
     public $companyNumber;
     public $companyEmail;
+
+    #[Validate('required|min:3')]
     public $companyTerms;
     
     //coustmer Details
@@ -241,10 +243,6 @@ new class extends Component
             $product = auth()->user()->customer()->find($this->customer_id)->product()->where('id', $this->products[$index]['id'])->first();
             $this->tamp[] = [
                 'id' => $product['id'],
-                'name' => $product['name'],
-                'quantity' => $product['quantity'],
-                'price' => $product['price'],
-                'tax' => $product['tax'],
             ];
         }
 
@@ -429,7 +427,7 @@ new class extends Component
                                     @endif
                                 </div>
 
-                                <div>
+                                <div class="grow-1">
                                     <x-input-label for="product-name-{{ $index }}" :value="__('Product-Name:')" />
                                     <x-text-input wire:model="products.{{ $index }}.name" id="product-name-{{ $index }}" class="block mt-1 w-full" type="text" autocomplete="off" placeholder="Product name" />
                                     <x-input-error :messages="$errors->get('products.'.$index.'.name')" class="mt-2" />
@@ -465,9 +463,8 @@ new class extends Component
                                             }
                                         }
                                     @endphp
-                                    <x-input-label for="product-Total-{{ $index }}" :value="__('Product-Sub-Total:')" />
-                                    <x-number-input value="{{$products[$index]['total']}}" id="product-total-{{ $index }}" class="block mt-1 w-full" type="number" autocomplete="off" placeholder="0.00" readonly />
-                                    <x-input-error :messages="$errors->get('product.'.$index.'.total')" class="mt-2" />
+                                    <x-input-label :value="__('Product-Sub-Total:')" />
+                                    <x-number-input value="{{$products[$index]['total']}}" class="block mt-1 w-full" type="number" autocomplete="off" placeholder="0.00" readonly />
                                 </div>
                             </div>
                         @endforeach
@@ -478,14 +475,14 @@ new class extends Component
                                     $grandTotal = 0;
                                 @endphp
                                 @foreach($products as $product)
-                                <x-text-input value="Sub-Total" id="product-sub-total" class="block mt-1 w-full" type="number" autocomplete="off" placeholder="Sub Total" readonly />
-                                <x-number-input value="{{$product['total']}}" id="product-sub-total" class="block mt-1 w-full" type="number" autocomplete="off" placeholder="0.00" readonly />
+                                <x-text-input value="Sub-Total" class="block mt-1 w-full" placeholder="Sub Total" readonly />
+                                <x-number-input value="{{$product['total']}}" class="block mt-1 w-full"  placeholder="0.00" readonly />
                                     @php
                                         $grandTotal += $product['total'];
                                     @endphp
                                 @endforeach
-                                    <x-text-input value="Total" id="product-sub-total" class="bg-gray-200 block mt-1 w-full" type="number" autocomplete="off" placeholder="Total" readonly />
-                                    <x-number-input value="{{$grandTotal}}" id="product-sub-total" class="block mt-1 w-full bg-gray-200" type="number" autocomplete="off" placeholder="0.00" readonly />
+                                    <x-text-input value="Total" class="bg-gray-200 block mt-1 w-full" placeholder="Total" readonly />
+                                    <x-number-input value="{{$grandTotal}}" class="block mt-1 w-full bg-gray-200"  placeholder="0.00" readonly />
                             </div>
                         </div>
 
