@@ -10,19 +10,25 @@ RUN apt-get update && apt-get install -y \
     zip \
     libzip-dev \
     libxml2-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     default-mysql-client \
     nodejs \
     npm \
     && rm -rf /var/lib/apt/lists/*
 
-# PHP extensions
+# Configure and install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
     zip \
     dom \
     xml \
-    xmlwriter
+    xmlwriter \
+    gd
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -31,12 +37,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # Install PHP dependencies
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction -vvv
-# Install frontend dependencies
-RUN npm install
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Build frontend assets
+# Frontend
+RUN npm install
 RUN npm run build
 
 EXPOSE 10000
