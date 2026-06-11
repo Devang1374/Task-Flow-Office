@@ -31,8 +31,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # Install PHP dependencies
-RUN composer diagnose && composer install -vvv
-
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction -vvv
 # Install frontend dependencies
 RUN npm install
 
