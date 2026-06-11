@@ -2,34 +2,43 @@ FROM php:8.2-cli
 
 WORKDIR /app
 
-COPY . .
-
-# Install system packages
+# System dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     unzip \
     zip \
     libzip-dev \
+    libxml2-dev \
     default-mysql-client \
     nodejs \
-    npm
+    npm \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql zip
+# PHP extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    zip \
+    dom \
+    xml \
+    xmlwriter
 
-# Install Composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install PHP packages
-RUN composer install --no-dev --optimize-autoloader
+# Copy application
+COPY . .
 
-# Install frontend packages
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install frontend dependencies
 RUN npm install
 
-# Build frontend
+# Build frontend assets
 RUN npm run build
 
 EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
