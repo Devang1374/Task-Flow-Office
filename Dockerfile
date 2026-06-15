@@ -13,10 +13,14 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     default-mysql-client \
     nodejs \
-    npm
+    npm \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql zip
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql zip gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
