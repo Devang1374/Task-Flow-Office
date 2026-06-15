@@ -9,6 +9,8 @@ use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TaskImport;
 
+use App\Jobs\createCsv;
+
 //view to pdf
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -32,6 +34,7 @@ new class extends Component
         $this->isEditing = false;
         $this->showDownload = false;
         $this->isImport = false;
+        $this->csvUrl = '';
     }
 
     //function that shows add task form
@@ -137,7 +140,9 @@ new class extends Component
 
     //download csv
     public function csv(){
-      $this->redirectRoute('csv');
+      createCsv::dispatch(auth()->user()->id);
+      $this->dispatch('task-updated');
+      $this->message = 'CSV File will be available when it is ready';
     }
 
     //download xlsx
@@ -165,10 +170,35 @@ new class extends Component
     public function isImportBtn(){
         $this->isImport = $this->isImport ? false : true;
     }
+
+    public function downloadFile(){
+        $this->dispatch('task-updated');
+        return redirect()->to(asset($this->csvUrl));
+    }
+
+    public $csvUrl;
 };
 ?>
 
 <div>
+  <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+  <script>
+    
+
+    Pusher.logToConsole = true;
+    
+    var pusher = new Pusher('84b2883da74d45c5a2f7', {
+        cluster: 'mt1',
+        authEndpoint: '/broadcasting/auth'
+    });
+    
+    //frontend
+    var channel = pusher.subscribe('private-csv.{{auth()->user()->id}}');
+        channel.bind('App\\Events\\CsvCreated', function(data) {
+          @this.set('csvUrl', data['url']);
+    });
+  </script>
+
     @if($message)
   <div>
   <!-- Main Position Container (Fixed to bottom-right corner) -->
@@ -225,7 +255,7 @@ new class extends Component
   </style>
   </div>
     @endif
-
+    
     <!-- create task -->
     <div wire:key="task-create-container">
         @if($showForm)
@@ -262,7 +292,7 @@ new class extends Component
                 <div class="p-2 flex w-full justify-between text-gray-900 dark:text-gray-100">
                   <!-- search input -->
                   <x-text-input wire:model.live="search" title="Search Task Using Title And Caption You can input 0 for Complete task and 1 for Active Task" placeholder="Search..." id="search"/>
-                  
+
                   <!-- category selector -->
                   <div class="relative w-full max-w-xs">
                     <!-- Visual Indicator Arrow -->
@@ -283,7 +313,11 @@ new class extends Component
                         @endforeach
                     </select>
                   </div>
-
+                  @if($csvUrl)
+                  <div>
+                      <x-primary-button wire:click="downloadFile">Your Csv Ready Click To Download</x-primary-button>
+                  </div>
+                  @endif
                   <!-- add button -->
                   <div>
                     <x-primary-button title="Add New Task" wire:click="showDownloadLinks">Download</x-primary-button>

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Foundation\Inspiring;
+use App\Models\User;
+use App\Support\DripEmailer;
 use Illuminate\Support\Facades\Artisan;
 
 /*

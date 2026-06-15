@@ -418,14 +418,6 @@ new class extends Component
 
                         @foreach($products as $index => $product)
                             <div class="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-4 items-end p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50" wire:key="product-row-{{ $index }}">
-                                
-                                <div class="sm:col-span-2 lg:col-span-1 mt-2 lg:mt-0">
-                                    @if(count($products) > 1)
-                                        <button type="button" wire:click="removeProductRow({{ $index }})" class="w-full bg-red-500 text-white px-3 py-2.5 rounded-md shadow-sm hover:bg-red-600 transition focus:ring-2 focus:ring-red-500/50 outline-none">
-                                            Remove
-                                        </button>
-                                    @endif
-                                </div>
 
                                 <div class="grow-1">
                                     <x-input-label for="product-name-{{ $index }}" :value="__('Product-Name:')" />
@@ -465,6 +457,14 @@ new class extends Component
                                     @endphp
                                     <x-input-label :value="__('Product-Sub-Total:')" />
                                     <x-number-input value="{{$products[$index]['total']}}" class="block mt-1 w-full" type="number" autocomplete="off" placeholder="0.00" readonly />
+                                </div>
+
+                                <div>
+                                    @if(count($products) > 1)
+                                        <button type="button" wire:click="removeProductRow({{ $index }})" class="w-full bg-red-500 text-white px-3 py-2.5 rounded-md shadow-sm hover:bg-red-600 transition focus:ring-2 focus:ring-red-500/50 outline-none">
+                                            Remove
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

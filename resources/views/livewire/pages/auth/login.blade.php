@@ -9,15 +9,39 @@ use Livewire\Volt\Component;
 new #[Layout('layouts.guest')] class extends Component
 {
     public LoginForm $form;
+    public $recaptchaToken;
 
+    public $message;
     /**
      * Handle an incoming authentication request.
      */
     public function login(): void
     {
-        $this->validate();
+        $this->validate([
+            'recaptchaToken' => 'required',
+        ]);
 
-        $this->form->authenticate();
+        $response = Http::asForm()->post(config('services.recaptcha.site'), [
+            'secret'   => config('services.recaptcha.secret'), 
+            'response' => $this->recaptchaToken,
+            'remoteip' => request()->ip(),
+        ]);
+
+        if (!$response->json('success')) {
+            $this->recaptchaToken = null;
+            $this->js('grecaptcha.reset();');
+            $this->addError('recaptchaToken', 'reCAPTCHA verification failed. Please try again.');
+            return;
+        }
+
+        try {
+            $this->form->authenticate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->recaptchaToken = null;
+            $this->js('grecaptcha.reset();');
+
+            throw $e;
+        }
 
         Session::regenerate();
 
@@ -57,6 +81,27 @@ new #[Layout('layouts.guest')] class extends Component
             </label>
         </div>
 
+        <!-- google captch -->
+        <div wire:ignore class="mt-4">
+            <div class="g-recaptcha" 
+                 data-sitekey="{{config('services.recaptcha.key')}}"
+                 data-callback="onReCaptchaSuccess"
+                 data-expired-callback="onReCaptchaExpired">
+            </div>
+        </div>
+        @error('recaptchaToken') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+
+        <script>
+            function onReCaptchaSuccess(token) {
+                @this.set('recaptchaToken', token);
+            }
+
+            function onReCaptchaExpired() {
+                @this.set('recaptchaToken', null);
+            }
+        </script>
+
+        <script async src="https://www.google.com/recaptcha/api.js"></script>
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}" wire:navigate>

@@ -14,12 +14,7 @@ return new class extends Migration
         Schema::create('phones', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->string('company_name')->nullable();
-            $table->string('email')->nullable();
-            $table->string('address')->nullable();
-            $table->string('terms')->nullable();
-            
-            $table->string('number')->nullable();
+            $table->string('number');
             $table->timestamps();
         });
     }

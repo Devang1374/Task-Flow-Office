@@ -186,7 +186,7 @@ new class extends Component
                                 @if(isset($customer['invoice'][0]))
                                 <tr class="hover:bg-gray-50/70 transition-colors dark:hover:bg-gray-700/30">
                                     <td rowspan="{{$row}}" class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['name']}}</td>
-                                    <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][0]['invoice_number']}}</td>
+                                    <td class="px-6 py-4 font-normal break-keep text-gray-600 dark:text-gray-300">{{$customer['invoice'][0]['invoice_number']}}</td>
                                     <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][0]['order_number']}}</td>
                                     <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][0]['created_at']}}</td>
                                     <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][0]['due_date']}}</td>
@@ -209,7 +209,7 @@ new class extends Component
                                 @if($row > 0)
                                 @for($i = 1; $i < $row; $i++)
                                 <tr class="hover:bg-gray-50/70 transition-colors dark:hover:bg-gray-700/30">
-                                    <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][$i]['invoice_number']}}</td>
+                                    <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300 break-keep">{{$customer['invoice'][$i]['invoice_number']}}</td>
                                     <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][$i]['order_number']}}</td>
                                     <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][$i]['created_at']}}</td>
                                     <td class="px-6 py-4 font-normal text-gray-600 dark:text-gray-300">{{$customer['invoice'][$i]['due_date']}}</td>

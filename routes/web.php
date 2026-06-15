@@ -40,9 +40,10 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth', 'verified'])->group(function(){
     Route::view('task','Task')->name('task');
     Route::view('roles','roles')->name('roles');
-    Route::view('MyRoles','MyRoles')->name('myRoles');
-    Route::view('customer','customer')->name('customer');
     Route::view('invoice','invoice')->name('invoice');
+    Route::view('MyRoles','MyRoles')->name('myRoles');
+    Route::view('weather','weather')->name('weather');
+    Route::view('customer','customer')->name('customer');
     Route::view('category','category')->name('category');
     Route::view('assignRoles','assign-roles')->name('assignRoles');
 
@@ -57,9 +58,21 @@ Route::get('addTask', function(){
     task::factory()->count(10)->state(new Sequence(['isActive' => 1],['isActive' => 0]))->create();
 });
 
+use App\Events\CsvCreated;
+use App\Jobs\createCsv;
+use App\Exports\TaskExport;
+
+use Illuminate\Support\Facades\Cache;
+
+//route
 Route::get('test', function(){
-        
-        return "update";
+    $collection = collect(['devang','yaksh','yash', null, ''])->map(function(?string $name){
+        return strtoupper($name);
+    })->reject(function(string $name){
+        return empty($name);
+    })->chunk(1);
+
+    return "$collection";
 });
 
 Route::get('testTask', [UserController::class, 'testTask']);

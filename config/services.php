@@ -13,6 +13,12 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    //google captcha
+    'recaptcha' => [
+        'key' => env('RECAPTCHA_SITE_KEY'),
+        'secret' => env('RECAPTCHA_SECRET_KEY'),
+        'site' => env('RECAPTCHA_SITE'),
+    ],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
