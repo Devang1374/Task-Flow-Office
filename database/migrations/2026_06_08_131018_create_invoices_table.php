@@ -23,6 +23,10 @@ return new class extends Migration
             $table->string('company_number');
             $table->string('company_address');
             $table->string('terms');
+            $table->string('customer_name');
+            $table->string('customer_email');
+            $table->string('customer_number');
+            $table->string('customer_address');
             $table->timestamps();
         });
     }
