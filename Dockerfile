@@ -25,6 +25,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+RUN php artisan storage:link || true
+
 # Install PHP packages
 RUN composer install --no-dev --optimize-autoloader
 
